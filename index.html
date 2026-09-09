@@ -324,7 +324,300 @@
     <!-- ============ CONTEÚDO PRINCIPAL ============ -->
     <main id="conteudo" class="flex-1 overflow-y-auto bg-neutral-50 relative" style="padding-bottom:80px;">
 
-      <!-- TELAS -->
+      <section data-tela="mapa-de-carregadores" class="hidden">
+  <div class="flex flex-col h-full bg-gray-50">
+    <div class="bg-white px-4 pt-4 pb-3 shadow-sm relative z-10">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="flex-1 relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input id="mapa-input-busca" type="text" placeholder="Buscar endereço ou local..." class="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm font-body text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-marca-500 focus:bg-white transition-all" oninput="mapa_de_carregadores_filtrar(this.value)">
+        </div>
+        <button onclick="mostrarTela('notificacoes')" class="relative p-2.5 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors active:scale-95">
+          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+        </button>
+      </div>
+      <div class="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        <button onclick="mapa_de_carregadores_filtrar_tipo('todos')" class="mapa-filtro-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all bg-marca-600 text-white" data-filtro="todos">Todos</button>
+        <button onclick="mapa_de_carregadores_filtrar_tipo('livre')" class="mapa-filtro-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600" data-filtro="livre">Disponível</button>
+        <button onclick="mapa_de_carregadores_filtrar_tipo('ocupado')" class="mapa-filtro-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600" data-filtro="ocupado">Ocupado</button>
+        <button onclick="mapa_de_carregadores_filtrar_tipo('rapido')" class="mapa-filtro-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600" data-filtro="rapido">Rápido</button>
+      </div>
+    </div>
+    <div class="flex-1 relative bg-marca-900 overflow-hidden">
+      <svg class="w-full h-full" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="mapBg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#14532D"/>
+            <stop offset="100%" stop-color="#052e16"/>
+          </linearGradient>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="400" height="500" fill="url(#mapBg)"/>
+        <rect width="400" height="500" fill="url(#grid)"/>
+        <path d="M0,200 Q100,150 200,180 T400,160" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+        <path d="M0,350 Q150,300 250,340 T400,320" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+        <path d="M100,0 Q80,250 120,500" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+        <path d="M300,0 Q280,200 320,500" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+        <rect x="20" y="80" width="80" height="50" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+        <rect x="200" y="120" width="120" height="40" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+        <rect x="50" y="300" width="90" height="60" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+        <rect x="280" y="350" width="100" height="70" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+        <g id="mapa-marcadores"></g>
+      </svg>
+      <div class="absolute top-3 left-3 right-3 flex justify-between items-start pointer-events-none">
+        <div class="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg pointer-events-auto">
+          <p class="text-[10px] text-gray-500 font-medium uppercase tracking-wide">Localização atual</p>
+          <p class="text-xs font-semibold text-gray-800">Av. Paulista, 1500</p>
+          <p class="text-[10px] text-gray-500">São Paulo - SP</p>
+        </div>
+      </div>
+      <div id="mapa-estado-vazio" class="hidden absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="text-center px-6">
+          <svg class="w-12 h-12 mx-auto text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <p class="text-sm text-gray-400 font-medium">Nenhum posto encontrado</p>
+        </div>
+      </div>
+    </div>
+    <div id="mapa-card-posto" class="bg-white rounded-t-2xl shadow-xl -mt-6 relative z-20 mx-3">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mt-3 mb-2"></div>
+      <div class="px-4 pb-4">
+        <div class="flex items-start justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <div id="mapa-indicador-status" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+            <span id="mapa-status-texto" class="text-xs font-semibold text-green-600">2 vagas disponíveis</span>
+          </div>
+          <span id="mapa-distancia" class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">0.8 km</span>
+        </div>
+        <h3 id="mapa-nome-posto" class="text-base font-display font-bold text-gray-900 mb-1">Posto de Recarga EcoCharge</h3>
+        <p id="mapa-endereco-posto" class="text-xs text-gray-500 mb-3 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Av. Rebouças, 2870 - Pinheiros, SP
+        </p>
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="bg-marca-50 rounded-xl p-2.5 text-center">
+            <p id="mapa-preco-kwh" class="text-sm font-bold text-marca-700">R$ 1,20</p>
+            <p class="text-[10px] text-gray-500 mt-0.5">preço/kWh</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-2.5 text-center">
+            <p id="mapa-potencia" class="text-sm font-bold text-gray-700">150 kW</p>
+            <p class="text-[10px] text-gray-500 mt-0.5">potência</p>
+          </div>
+          <div class="bg-gray-50 rounded-xl p-2.5 text-center">
+            <p id="mapa-conector" class="text-sm font-bold text-gray-700">CCS2</p>
+            <p class="text-[10px] text-gray-500 mt-0.5">conector</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="mapa_de_carregadores_ver_detalhes()" class="flex-1 py-2.5 px-4 border-2 border-marca-600 text-marca-700 rounded-xl text-sm font-semibold hover:bg-marca-50 transition-all active:scale-95">
+            Ver detalhes
+          </button>
+          <button onclick="mostrarTela('qr-code-e-pagamento')" class="flex-1 py-2.5 px-4 bg-marca-600 text-white rounded-xl text-sm font-semibold hover:bg-marca-700 transition-all active:scale-95 shadow-md shadow-marca-200">
+            Carregar agora
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="pb-20"></div>
+    <button onclick="mostrarTela('qr-code-e-pagamento')" class="fab-btn fixed bottom-24 right-4 z-30 w-14 h-14 bg-marca-500 hover:bg-marca-600 text-white rounded-full shadow-lg shadow-marca-300 flex items-center justify-center transition-all active:scale-90 hover:scale-105">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    </button>
+  </div>
+  <nav class="fixed bottom-0 left-0 right-0 z-40">
+    <div class="max-w-[430px] mx-auto bg-white border-t border-gray-100 px-2 py-1.5 flex justify-around items-center shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+      <button onclick="mostrarTela('mapa-de-carregadores')" class="flex flex-col items-center gap-0.5 py-1 px-3 text-marca-600 transition-colors">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <span class="text-[10px] font-semibold">Mapa</span>
+      </button>
+      <button onclick="mostrarTela('agendar-carregamento')" class="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-gray-600 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="text-[10px] font-medium">Agendar</span>
+      </button>
+      <button onclick="mostrarTela('historico-de-sessoes')" class="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-gray-600 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="text-[10px] font-medium">Histórico</span>
+      </button>
+      <button onclick="mostrarTela('suporte-com-chatbot')" class="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-400 hover:text-gray-600 transition-colors relative">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        <span class="text-[10px] font-medium">Suporte</span>
+        <span class="absolute -top-0.5 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+      </button>
+    </div>
+  </nav>
+  <script>
+    const mapa_de_carregadores_postos = [
+      { id:1, nome:"Posto EcoCharge Pinheiros", endereco:"Av. Rebouças, 2870 - Pinheiros, São Paulo - SP", distancia:0.8, precoKwh:1.20, potencia:150, conector:"CCS2", status:"livre", disponiveis:2, total:4, lat:15, lng:22, nota:4.8 },
+      { id:2, nome:"Carregadores Urbanos Jardins", endereco:"R. Augusta, 1500 - Jardins, São Paulo - SP", distancia:1.4, precoKwh:1.35, potencia:350, conector:"CCS2", status:"livre", disponiveis:1, total:2, lat:8, lng:30, nota:4.5 },
+      { id:3, nome:"Station Moema Rápido", endereco:"Av. Ibirapuera, 3100 - Moema, São Paulo - SP", distancia:2.1, precoKwh:1.50, potencia:350, conector:"CCS2", status:"ocupado", disponiveis:0, total:3, lat:32, lng:14, nota:4.2 },
+      { id:4, nome:"Posto Vila Madalena", endereco:"R. Aspicuelta, 420 - Vila Madalena, SP", distancia:3.0, precoKwh:0.95, potencia:50, conector:"Type 2", status:"livre", disponiveis:3, total:6, lat:25, lng:45, nota:4.6 },
+      { id:5, nome:"ChargePoint Shopping Ibirapuera", endereco:"Av. Ibirapuera, 2900 - Moema, SP", distancia:3.5, precoKwh:1.40, potencia:150, conector:"CCS2", status:"indisponivel", disponiveis:0, total:4, lat:40, lng:55, nota:3.9 },
+      { id:6, nome:"Eletroposto Brigadeiro", endereco:"Av. Brigadeiro Faria Lima, 2232 - Jardim Paulistano, SP", distancia:4.2, precoKwh:1.25, potencia:150, conector:"CCS2", status:"livre", disponiveis:2, total:5, lat:50, lng:35, nota:4.7 },
+      { id:7, nome:"Carregador COPAC", endereco:"R. Oscar Freire, 200 - Jardins, SP", distancia:5.0, precoKwh:1.10, potencia:50, conector:"Type 2", status:"livre", disponiveis:4, total:4, lat:60, lng:62, nota:4.4 },
+      { id:8, nome:"Station Morumbi Premium", endereco:"Av. Morumbi, 7500 - Morumbi, SP", distancia:6.3, precoKwh:1.55, potencia:350, conector:"CCS2", status:"ocupado", disponiveis:0, total:2, lat:68, lng:48, nota:4.1 }
+    ];
+    let mapa_de_carregadores_filtro_atual = 'todos';
+    let mapa_de_carregadores_posto_selecionado = mapa_de_carregadores_postos[0];
+
+    function mapa_de_carregadores_renderizar_marcadores(postos) {
+      const container = document.getElementById('mapa-marcadores');
+      if (!container) return;
+      container.innerHTML = '';
+      const cores = { livre:'#22C55E', ocupado:'#EAB308', indisponivel:'#EF4444' };
+      const labels = { livre:'Livre', ocupado:'Ocupado', indisponivel:'Indisponível' };
+      postos.forEach((p, i) => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+        g.setAttribute('class','cursor-pointer');
+        g.setAttribute('onclick',`mapa_de_carregadores_selecionar_posto(${p.id})`);
+        const pulse = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        pulse.setAttribute('cx', p.lng);
+        pulse.setAttribute('cy', p.lat);
+        pulse.setAttribute('r','12');
+        pulse.setAttribute('fill', cores[p.status]);
+        pulse.setAttribute('opacity','0.2');
+        if (p.status === 'livre') {
+          pulse.innerHTML = `<animate attributeName="r" values="10;16;10" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite"/>`;
+        }
+        const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        circle.setAttribute('cx', p.lng);
+        circle.setAttribute('cy', p.lat);
+        circle.setAttribute('r','8');
+        circle.setAttribute('fill', cores[p.status]);
+        circle.setAttribute('stroke','white');
+        circle.setAttribute('stroke-width','2');
+        const icon = document.createElementNS('http://www.w3.org/2000/svg','text');
+        icon.setAttribute('x', p.lng);
+        icon.setAttribute('y', p.lat + 3);
+        icon.setAttribute('text-anchor','middle');
+        icon.setAttribute('font-size','7');
+        icon.setAttribute('fill','white');
+        icon.setAttribute('font-weight','bold');
+        icon.textContent = '⚡';
+        g.appendChild(pulse);
+        g.appendChild(circle);
+        g.appendChild(icon);
+        container.appendChild(g);
+      });
+    }
+
+    function mapa_de_carregadores_selecionar_posto(id) {
+      const posto = mapa_de_carregadores_postos.find(p => p.id === id);
+      if (!posto) return;
+      mapa_de_carregadores_posto_selecionado = posto;
+      document.getElementById('mapa-nome-posto').textContent = posto.nome;
+      document.getElementById('mapa-endereco-posto').innerHTML = `<svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>${posto.endereco}`;
+      document.getElementById('mapa-distancia').textContent = posto.distancia.toFixed(1) + ' km';
+      document.getElementById('mapa-preco-kwh').textContent = 'R$ ' + posto.precoKwh.toFixed(2).replace('.',',');
+      document.getElementById('mapa-potencia').textContent = posto.potencia + ' kW';
+      document.getElementById('mapa-conector').textContent = posto.conector;
+      const indStatus = document.getElementById('mapa-indicador-status');
+      const statusText = document.getElementById('mapa-status-texto');
+      if (posto.status === 'livre') {
+        indStatus.className = 'w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse';
+        statusText.className = 'text-xs font-semibold text-green-600';
+        statusText.textContent = posto.disponiveis + ' vaga' + (posto.disponiveis > 1 ? 's' : '') + ' disponível' + (posto.disponiveis > 1 ? 's' : '');
+      } else if (posto.status === 'ocupado') {
+        indStatus.className = 'w-2.5 h-2.5 rounded-full bg-yellow-500';
+        statusText.className = 'text-xs font-semibold text-yellow-600';
+        statusText.textContent = 'Todas vagas ocupadas';
+      } else {
+        indStatus.className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+        statusText.className = 'text-xs font-semibold text-red-600';
+        statusText.textContent = 'Indisponível no momento';
+      }
+    }
+
+    function mapa_de_carregadores_filtrar_tipo(tipo) {
+      mapa_de_carregadores_filtro_atual = tipo;
+      document.querySelectorAll('.mapa-filtro-btn').forEach(btn => {
+        if (btn.dataset.filtro === tipo) {
+          btn.className = 'mapa-filtro-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all bg-marca-600 text-white';
+        } else {
+          btn.className = 'mapa-filtro-btn px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-gray-200';
+        }
+      });
+      mapa_de_carregadores_aplicar_filtro();
+    }
+
+    function mapa_de_carregadores_filtrar(termo) {
+      mapa_de_carregadores_termo = termo.toLowerCase().trim();
+      mapa_de_carregadores_aplicar_filtro();
+    }
+
+    function mapa_de_carregadores_aplicar_filtro() {
+      let postos = [...mapa_de_carregadores_postos];
+      const t = mapa_de_carregadores_termo || '';
+      if (t) {
+        postos = postos.filter(p => p.nome.toLowerCase().includes(t) || p.endereco.toLowerCase().includes(t));
+      }
+      if (mapa_de_carregadores_filtro_atual !== 'todos') {
+        if (mapa_de_carregadores_filtro_atual === 'rapido') {
+          postos = postos.filter(p => p.potencia >= 150);
+        } else {
+          postos = postos.filter(p => p.status === mapa_de_carregadores_filtro_atual);
+        }
+      }
+      mapa_de_carregadores_renderizar_marcadores(postos);
+      const ev = document.getElementById('mapa-estado-vazio');
+      if (ev) ev.classList.toggle('hidden', postos.length > 0);
+      if (postos.length > 0 && !postos.find(p => p.id === mapa_de_carregadores_posto_selecionado.id)) {
+        mapa_de_carregadores_selecionar_posto(postos[0].id);
+      }
+    }
+
+    function mapa_de_carregadores_ver_detalhes() {
+      const p = mapa_de_carregadores_posto_selecionado;
+      if (!p) return;
+      const cores = { livre:'bg-green-100 text-green-700', ocupado:'bg-yellow-100 text-yellow-700', indisponivel:'bg-red-100 text-red-700' };
+      const html = `
+        <div class="p-5 space-y-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold ${cores[p.status]} mb-2">${p.status === 'livre' ? 'Disponível' : p.status === 'ocupado' ? 'Ocupado' : 'Indisponível'}</span>
+              <h3 class="text-lg font-display font-bold text-gray-900">${p.nome}</h3>
+            </div>
+            <div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
+              <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              <span class="text-sm font-bold text-yellow-700">${p.nota}</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-start gap-2 text-sm text-gray-600">
+              <svg class="w-4 h-4 mt-0.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+              ${p.endereco}
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+              ${p.distancia.toFixed(1)} km de distância
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-marca-50 rounded-xl p-3"><p class="text-xs text-gray-500">Preço / kWh</p><p class="text-lg font-bold text-marca-700">R$ ${p.precoKwh.toFixed(2).replace('.',',')}</p></div>
+            <div class="bg-gray-50 rounded-xl p-3"><p class="text-xs text-gray-500">Potência</p><p class="text-lg font-bold text-gray-800">${p.potencia} kW</p></div>
+            <div class="bg-gray-50 rounded-xl p-3"><p class="text-xs text-gray-500">Conector</p><p class="text-lg font-bold text-gray-800">${p.conector}</p></div>
+            <div class="bg-gray-50 rounded-xl p-3"><p class="text-xs text-gray-500">Vagas</p><p class="text-lg font-bold text-gray-800">${p.disponiveis}/${p.total}</p></div>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-3">
+            <p class="text-xs text-blue-600 font-semibold mb-1">Horário de funcionamento</p>
+            <p class="text-sm text-gray-700">Aberto 24 horas, todos os dias</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="fecharModal();mostrarTela('agendar-carregamento')" class="flex-1 py-3 border-2 border-marca-600 text-marca-700 rounded-xl text-sm font-semibold hover:bg-marca-50 transition-all active:scale-95">Agendar</button>
+            <button onclick="fecharModal();mostrarTela('qr-code-e-pagamento')" class="flex-1 py-3 bg-marca-600 text-white rounded-xl text-sm font-semibold hover:bg-marca-700 transition-all active:scale-95 shadow-md shadow-marca-200">Iniciar carregamento</button>
+          </div>
+        </div>`;
+      abrirModal(html, 'Detalhes do Posto');
+    }
+
+    (function mapa_de_carregadores_init() {
+      mapa_de_carregadores_renderizar_marcadores(mapa_de_carregadores_postos);
+      mapa_de_carregadores_termo = '';
+    })();
+  </script>
+</section>
+
+    <!-- TELAS -->
       <!-- TELAS -->
 
     </main>
