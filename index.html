@@ -2503,6 +2503,314 @@
           </div>
           <span class="text-xs font-medium text-marca-700">Configurações</span
 
+    <section data-tela="suporte-com-chatbot" class="hidden">
+    <div class="flex flex-col h-full bg-marca-50">
+        <!-- Header da Tela -->
+        <div class="bg-white px-4 py-4 border-b border-marca-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="font-display text-xl font-bold text-marca-900">Suporte</h1>
+                    <p class="text-sm text-marca-600 mt-0.5">助手 virtual 24h</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="suporte_com_chatbot_abrirFAQ()" class="p-2 bg-marca-100 rounded-full hover:bg-marca-200 transition-colors">
+                        <svg class="w-5 h-5 text-marca-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                    <div class="w-8 h-8 bg-marca-600 rounded-full flex items-center justify-center">
+                        <span class="text-white text-sm font-bold">EV</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área do Chat -->
+        <div id="suporte-chat-container" class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            <!-- Mensagens do Chat -->
+            <div id="suporte-chat-messages" class="space-y-3">
+                <!-- Mensagem inicial do Bot -->
+                <div class="flex justify-start">
+                    <div class="max-w-[85%] bg-marca-600 text-white p-3 rounded-2xl rounded-tl-sm">
+                        <p class="text-sm">Olá! Sou o Assistente EV. Como posso ajudar você hoje?</p>
+                        <span class="text-xs text-marca-200 mt-1 block">● Online</span>
+                    </div>
+                </div>
+
+                <!-- Botões Rápidos -->
+                <div class="flex flex-wrap gap-2 justify-start">
+                    <button onclick="suporte_com_chatbot_enviarMensagem('Problema no carregamento')"
+                        class="bg-white border border-marca-200 text-marca-700 px-3 py-2 rounded-full text-xs font-medium hover:bg-marca-50 hover:border-marca-400 transition-all active:scale-95">
+                        ⚡ Problema no carregamento
+                    </button>
+                    <button onclick="suporte_com_chatbot_enviarMensagem('Agendamento')"
+                        class="bg-white border border-marca-200 text-marca-700 px-3 py-2 rounded-full text-xs font-medium hover:bg-marca-50 hover:border-marca-400 transition-all active:scale-95">
+                        📅 Agendamento
+                    </button>
+                    <button onclick="suporte_com_chatbot_enviarMensagem('Pagamento')"
+                        class="bg-white border border-marca-200 text-marca-700 px-3 py-2 rounded-full text-xs font-medium hover:bg-marca-50 hover:border-marca-400 transition-all active:scale-95">
+                        💳 Pagamento
+                    </button>
+                    <button onclick="suporte_com_chatbot_enviarMensagem('Outro')"
+                        class="bg-white border border-marca-200 text-marca-700 px-3 py-2 rounded-full text-xs font-medium hover:bg-marca-50 hover:border-marca-400 transition-all active:scale-95">
+                        ❓ Outro
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campo de Input -->
+        <div class="bg-white border-t border-marca-100 px-4 py-3">
+            <div class="flex items-center gap-2 bg-marca-50 rounded-full px-4 py-2 border border-marca-200">
+                <button onclick="suporte_com_chatbot_acionarMicrofone()" id="suporte-mic-btn" class="text-marca-400 hover:text-marca-600 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                    </svg>
+                </button>
+                <input type="text" id="suporte-mensagem-input"
+                    placeholder="Digite sua mensagem..."
+                    class="flex-1 bg-transparent border-none outline-none text-sm text-marca-900 placeholder-marca-400"
+                    onkeypress="if(event.key==='Enter') suporte_com_chatbot_enviarInput()">
+                <button onclick="suporte_com_chatbot_enviarInput()" class="text-marca-600 hover:text-marca-800 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Botão Falar com Atendente -->
+        <div class="bg-white border-t border-marca-100 px-4 py-3">
+            <button onclick="suporte_com_chatbot_falarComAtendente()"
+                class="w-full bg-marca-50 border border-marca-300 text-marca-700 py-3 rounded-xl font-medium text-sm hover:bg-marca-100 transition-colors active:scale-98 flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Falar com atendente humano
+                <span class="bg-marca-200 text-marca-800 text-xs px-2 py-0.5 rounded-full">~2 min</span>
+            </button>
+        </div>
+
+        <!-- FAQ Expansível (inicialmente oculto) -->
+        <div id="suporte-faq-section" class="hidden bg-white border-t border-marca-100">
+            <div class="px-4 py-3 border-b border-marca-100">
+                <h3 class="font-display font-semibold text-marca-900">Perguntas Frequentes</h3>
+            </div>
+            <div class="divide-y divide-marca-100">
+                <!-- FAQ Item 1 -->
+                <div>
+                    <button onclick="suporte_com_chatbot_toggleFAQ(this)" class="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-marca-50 transition-colors">
+                        <span class="text-sm text-marca-800 font-medium">Como cancelar um agendamento?</span>
+                        <svg class="w-5 h-5 text-marca-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="hidden px-4 pb-3">
+                        <p class="text-sm text-marca-600">Para cancelar, vá em "Meus Agendamentos", selecione o carregamento desejado e toque em "Cancelar". O cancelamento é gratuito até 1 hora antes do horário agendado.</p>
+                    </div>
+                </div>
+                <!-- FAQ Item 2 -->
+                <div>
+                    <button onclick="suporte_com_chatbot_toggleFAQ(this)" class="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-marca-50 transition-colors">
+                        <span class="text-sm text-marca-800 font-medium">Problemas com o carregador</span>
+                        <svg class="w-5 h-5 text-marca-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="hidden px-4 pb-3">
+                        <p class="text-sm text-marca-600">Verifique se o cabo está bem conectado. Se o problema persistir, reinicie o app e tente novamente. Caso	continue, entre em contato pelo chat.</p>
+                    </div>
+                </div>
+                <!-- FAQ Item 3 -->
+                <div>
+                    <button onclick="suporte_com_chatbot_toggleFAQ(this)" class="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-marca-50 transition-colors">
+                        <span class="text-sm text-marca-800 font-medium">Formas de pagamento</span>
+                        <svg class="w-5 h-5 text-marca-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="hidden px-4 pb-3">
+                        <p class="text-sm text-marca-600">Aceitamos cartão de crédito/débito (Visa, Mastercard, Amex), PIX e saldo da carteira EV. O pagamento é processado após cada sessão de carregamento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado do chat
+        const suporte_chat_historico = [
+            { tipo: 'bot', mensagem: 'Olá! Sou o Assistente EV. Como posso ajudar você hoje?', hora: 'Agora' }
+        ];
+
+        // Respostas automáticas do bot
+        const suporte_respostas_bot = {
+            'Problema no carregamento': {
+                resposta: 'Entendi! Para problemas no carregamento, vou precisar de algumas informações:\n\n1. Qual estação você está usando?\n2. O carregador mostra alguma mensagem de erro?\n3. O cabo está corretamente conectado?',
+               Sugestoes: ['Cabo não conecta', 'Erro no visor', 'Carregamento lento', 'Outro']
+            },
+            'Agendamento': {
+                resposta: 'Posso ajudar com seu agendamento! Você pode:\n\n📅 Verificar horários disponíveis no mapa\n📝 Criar novo agendamento\n❌ Cancelar agendamento existente\n\nO que precisa fazer?',
+                Sugestoes: ['Novo agendamento', 'Ver agendamentos', 'Cancelar', 'Alterar horário']
+            },
+            'Pagamento': {
+                resposta: 'Sobre pagamentos, temos as seguintes opções:\n\n💳 Cartão de crédito/débito\n💰 PIX\n📱 Saldo da carteira EV\n\nO que gostaria de saber?',
+                Sugestoes: ['Adicionar cartão', 'Ver histórico', 'Reembolso', 'Cupom desconto']
+            },
+            'Outro': {
+                resposta: 'Pode me contar mais sobre o que precisa! Estou aqui para ajudar com qualquer dúvida sobre carregamento de veículos elétricos.',
+                Sugestoes: ['Dúvida técnica', 'Sugestão', 'Elogio', 'Reclamação']
+            }
+        };
+
+        // Enviar mensagem pelos botões快速
+        function suporte_com_chatbot_enviarMensagem(texto) {
+            const container = document.getElementById('suporte-chat-messages');
+
+            // Adicionar mensagem do usuário
+            suporte_chat_historico.push({ tipo: 'usuario', mensagem: texto, hora: 'Agora' });
+
+            // Renderizar mensagem do usuário
+            const msgUsuario = document.createElement('div');
+            msgUsuario.className = 'flex justify-end';
+            msgUsuario.innerHTML = `
+                <div class="max-w-[85%] bg-marca-200 text-marca-900 p-3 rounded-2xl rounded-tr-sm">
+                    <p class="text-sm">${texto}</p>
+                    <span class="text-xs text-marca-500 mt-1 block text-right">● Agora</span>
+                </div>
+            `;
+            container.appendChild(msgUsuario);
+
+            // Remover botões快速 após seleção
+            const botoes = container.querySelector('.flex.flex-wrap');
+            if (botoes) botoes.remove();
+
+            // Simular resposta do bot
+            setTimeout(() => {
+                const resposta = suporte_respostas_bot[texto] || {
+                    resposta: 'Obrigado pela mensagem! Um de nossos atendentes vai analisar e responder em breve.',
+                    Sugestoes: []
+                };
+
+                suporte_chat_historico.push({ tipo: 'bot', mensagem: resposta.resposta, hora: 'Agora' });
+
+                const msgBot = document.createElement('div');
+                msgBot.className = 'flex justify-start';
+                msgBot.innerHTML = `
+                    <div class="max-w-[85%] bg-marca-600 text-white p-3 rounded-2xl rounded-tl-sm">
+                        <p class="text-sm whitespace-pre-line">${resposta.resposta}</p>
+                        <span class="text-xs text-marca-200 mt-1 block">● Agora</span>
+                    </div>
+                `;
+                container.appendChild(msgBot);
+
+                // Adicionar botões de sugestão
+                if (resposta.Sugestoes && resposta.Sugestoes.length > 0) {
+                    const sugestoesDiv = document.createElement('div');
+                    sugestoesDiv.className = 'flex flex-wrap gap-2 justify-start mt-2';
+                    resposta.Sugestoes.forEach(sug => {
+                        sugestoesDiv.innerHTML += `
+                            <button onclick="suporte_com_chatbot_enviarMensagem('${sug}')"
+                                class="bg-white border border-marca-200 text-marca-700 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-marca-50 hover:border-marca-400 transition-all active:scale-95">
+                                ${sug}
+                            </button>
+                        `;
+                    });
+                    container.appendChild(sugestoesDiv);
+                }
+
+                // Scroll para baixo
+                document.getElementById('suporte-chat-container').scrollTop = document.getElementById('suporte-chat-container').scrollHeight;
+            }, 800);
+        }
+
+        // Enviar mensagem do input
+        function suporte_com_chatbot_enviarInput() {
+            const input = document.getElementById('suporte-mensagem-input');
+            const texto = input.value.trim();
+
+            if (!texto) return;
+
+            suporte_com_chatbot_enviarMensagem(texto);
+            input.value = '';
+        }
+
+        // Microfone (simulação)
+        let suporte_mic_gravando = false;
+        function suporte_com_chatbot_acionarMicrofone() {
+            const btn = document.getElementById('suporte-mic-btn');
+
+            if (!suporte_mic_gravando) {
+                suporte_mic_gravando = true;
+                btn.innerHTML = '<svg class="w-5 h-5 text-red-500 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>';
+                toast('Gravando... Clique novamente para enviar', 'info');
+            } else {
+                suporte_mic_gravando = false;
+                btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>';
+
+                // Simular transcrição
+                const input = document.getElementById('suporte-mensagem-input');
+                input.value = 'Preciso de ajuda com meu último carregamento';
+                toast('Mensagem de voz convertida em texto', 'ok');
+            }
+        }
+
+        // Toggle FAQ
+        function suporte_com_chatbot_toggleFAQ(btn) {
+            const conteudo = btn.nextElementSibling;
+            const icone = btn.querySelector('svg');
+
+            if (conteudo.classList.contains('hidden')) {
+                conteudo.classList.remove('hidden');
+                icone.classList.add('rotate-180');
+            } else {
+                conteudo.classList.add('hidden');
+                icone.classList.remove('rotate-180');
+            }
+        }
+
+        // Abrir FAQ
+        function suporte_com_chatbot_abrirFAQ() {
+            const faq = document.getElementById('suporte-faq-section');
+            faq.classList.toggle('hidden');
+
+            if (!faq.classList.contains('hidden')) {
+                faq.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Falar com atendente humano
+        function suporte_com_chatbot_falarComAtendente() {
+            const modalHtml = `
+                <div class="text-center py-4">
+                    <div class="w-16 h-16 bg-marca-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-marca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-marca-900 mb-2">Aguarde na fila</h3>
+                    <p class="text-marca-600 text-sm mb-4">Tempo estimado de espera: <span class="font-semibold text-marca-700">~2 minutos</span></p>
+                    <div class="bg-marca-50 rounded-lg p-3 mb-4">
+                        <p class="text-sm text-marca-700 text-left">Sua posição na fila: <span class="font-bold">3º</span></p>
+                        <div class="w-full bg-marca-200 rounded-full h-2 mt-2">
+                            <div class="bg-marca-600 h-2 rounded-full animate-pulse" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="fecharModal(); toast('Atendimento cancelado', 'info')" class="flex-1 py-2 px-4 border border-marca-300 text-marca-700 rounded-lg text-sm font-medium hover:bg-marca-50">
+                            Cancelar
+                        </button>
+                        <button onclick="fecharModal(); toast('Conectando com atendente...', 'info')" class="flex-1 py-2 px-4 bg-marca-600 text-white rounded-lg text-sm font-medium hover:bg-marca-700">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+            `;
+            abrirModal(modalHtml, 'Atendente Humano');
+        }
+    </script>
+</section>
+
     <!-- TELAS -->
       <!-- TELAS -->
 
