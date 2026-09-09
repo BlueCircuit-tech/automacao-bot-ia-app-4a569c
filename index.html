@@ -1531,6 +1531,251 @@
   </script>
 </section>
 
+    <section data-tela="historico-de-sessoes" class="hidden">
+  <div class="p-4 space-y-4">
+    <!-- Header -->
+    <div class="mb-2">
+      <h1 class="text-xl font-display font-bold text-marca-900">Histórico de Sessões</h1>
+      <p class="text-sm text-marca-600">Suas recargas anteriores</p>
+    </div>
+
+    <!-- Resumo Mensal -->
+    <div class="bg-gradient-to-br from-marca-600 to-marca-800 rounded-2xl p-5 text-white shadow-lg">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-marca-100 text-sm font-medium">Resumo de Janeiro 2025</span>
+        <svg class="w-5 h-5 text-marca-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="text-center">
+          <p class="text-2xl font-bold">R$ 187,50</p>
+          <p class="text-xs text-marca-200">Total gasto</p>
+        </div>
+        <div class="text-center border-l border-marca-500">
+          <p class="text-2xl font-bold">89,2</p>
+          <p class="text-xs text-marca-200">kWh</p>
+        </div>
+        <div class="text-center border-l border-marca-500">
+          <p class="text-2xl font-bold">6</p>
+          <p class="text-xs text-marca-200">Sessões</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-marca-100">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="w-8 h-8 rounded-full bg-marca-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-marca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+          <span class="text-xs text-marca-500">Média/sessão</span>
+        </div>
+        <p class="text-lg font-bold text-marca-900">R$ 31,25</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-marca-100">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="w-8 h-8 rounded-full bg-marca-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-marca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <span class="text-xs text-marca-500">Posto frequente</span>
+        </div>
+        <p class="text-lg font-bold text-marca-900 truncate">Ipiranga Norte</p>
+      </div>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="bg-white rounded-xl p-3 shadow-sm border border-marca-100">
+      <p class="text-xs text-marca-500 mb-2 font-medium">Filtrar por período</p>
+      <div class="flex gap-2" id="filtro-periodo">
+        <button onclick="historico_de_sessoes_filtrar(7)" class="filtro-btn flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all bg-marca-600 text-white" data-dias="7">
+          7 dias
+        </button>
+        <button onclick="historico_de_sessoes_filtrar(30)" class="filtro-btn flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all bg-marca-50 text-marca-600 hover:bg-marca-100" data-dias="30">
+          30 dias
+        </button>
+        <button onclick="historico_de_sessoes_filtrar(90)" class="filtro-btn flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all bg-marca-50 text-marca-600 hover:bg-marca-100" data-dias="90">
+          90 dias
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de Sessões -->
+    <div id="lista-sessoes" class="space-y-3">
+      <!-- Itens inseridos via JS -->
+    </div>
+
+    <!-- Estado Vazio -->
+    <div id="sem-resultados" class="hidden text-center py-12">
+      <div class="w-16 h-16 bg-marca-50 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-marca-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h3 class="text-marca-900 font-semibold mb-1">Nenhuma sessão encontrada</h3>
+      <p class="text-sm text-marca-500">Não há registros para este período</p>
+    </div>
+  </div>
+
+  <script>
+    const sessoes = [
+      { id: 1, data: '2025-01-28', hora: '14:32', posto: 'Ipiranga Norte', endereco: 'Av. Paulista, 1000 - São Paulo', kwh: 18.5, valor: 55.50, duracao: '45 min', status: 'concluida' },
+      { id: 2, data: '2025-01-25', hora: '09:15', posto: 'Eletroposto Shopping', endereco: 'Shopping Center Norte - Brasília', kwh: 12.3, valor: 36.90, duracao: '32 min', status: 'concluida' },
+      { id: 3, data: '2025-01-20', hora: '18:45', posto: 'Ipiranga Norte', endereco: 'Av. Paulista, 1000 - São Paulo', kwh: 22.0, valor: 66.00, duracao: '55 min', status: 'concluida' },
+      { id: 4, data: '2025-01-15', hora: '11:20', posto: 'GreenCharge Premium', endereco: 'Rua Augusta, 500 - São Paulo', kwh: 15.8, valor: 47.40, duracao: '38 min', status: 'concluida' },
+      { id: 5, data: '2025-01-10', hora: '16:00', posto: 'Postoshell Elétrico', endereco: 'Av. Brasil, 2500 - Rio de Janeiro', kwh: 10.2, valor: 30.60, duracao: '28 min', status: 'concluida' },
+      { id: 6, data: '2025-01-05', hora: '08:30', posto: 'Ipiranga Norte', endereco: 'Av. Paulista, 1000 - São Paulo', kwh: 10.4, valor: 31.20, duracao: '26 min', status: 'concluida' },
+      { id: 7, data: '2024-12-28', hora: '13:45', posto: 'Eletroposto Shopping', endereco: 'Shopping Center Norte - Brasília', kwh: 20.1, valor: 60.30, duracao: '50 min', status: 'concluida' },
+      { id: 8, data: '2024-12-22', hora: '10:00', posto: 'GreenCharge Premium', endereco: 'Rua Augusta, 500 - São Paulo', kwh: 14.6, valor: 43.80, duracao: '35 min', status: 'concluida' }
+    ];
+
+    let filtroAtual = 30;
+
+    function historico_de_sessoes_filtrar(dias) {
+      filtroAtual = dias;
+      document.querySelectorAll('.filtro-btn').forEach(btn => {
+        if (parseInt(btn.dataset.dias) === dias) {
+          btn.classList.remove('bg-marca-50', 'text-marca-600', 'hover:bg-marca-100');
+          btn.classList.add('bg-marca-600', 'text-white');
+        } else {
+          btn.classList.add('bg-marca-50', 'text-marca-600', 'hover:bg-marca-100');
+          btn.classList.remove('bg-marca-600', 'text-white');
+        }
+      });
+      historico_de_sessoes_renderizar();
+    }
+
+    function historico_de_sessoes_renderizar() {
+      const hoje = new Date('2025-01-29');
+      const limite = new Date();
+      limite.setDate(hoje.getDate() - filtroAtual);
+
+      const filtradas = sessoes.filter(s => new Date(s.data) >= limite);
+      const lista = document.getElementById('lista-sessoes');
+      const vazio = document.getElementById('sem-resultados');
+
+      if (filtradas.length === 0) {
+        lista.innerHTML = '';
+        vazio.classList.remove('hidden');
+        return;
+      }
+
+      vazio.classList.add('hidden');
+      lista.innerHTML = filtradas.map(s => `
+        <div onclick="historico_de_sessoes_detalhe(${s.id})" class="bg-white rounded-xl p-4 shadow-sm border border-marca-100 cursor-pointer hover:border-marca-300 transition-all active:scale-[0.99]">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-marca-900">${s.posto}</span>
+                <span class="badge-concluida px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">Concluída</span>
+              </div>
+              <p class="text-xs text-marca-500">${s.endereco}</p>
+            </div>
+            <button onclick="event.stopPropagation(); historico_de_sessoes_recibo(${s.id})" class="p-2 hover:bg-marca-50 rounded-lg transition-colors" title="Baixar recibo">
+              <svg class="w-5 h-5 text-marca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="grid grid-cols-4 gap-2 text-center">
+            <div class="bg-marca-50 rounded-lg p-2">
+              <p class="text-xs text-marca-500">Data</p>
+              <p class="text-sm font-semibold text-marca-900">${dataBR(s.data)}</p>
+            </div>
+            <div class="bg-marca-50 rounded-lg p-2">
+              <p class="text-xs text-marca-500">kWh</p>
+              <p class="text-sm font-semibold text-marca-900">${s.kwh}</p>
+            </div>
+            <div class="bg-marca-50 rounded-lg p-2">
+              <p class="text-xs text-marca-500">Duração</p>
+              <p class="text-sm font-semibold text-marca-900">${s.duracao}</p>
+            </div>
+            <div class="bg-marca-600 rounded-lg p-2">
+              <p class="text-xs text-marca-200">Total</p>
+              <p class="text-sm font-bold text-white">${brl(s.valor)}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function historico_de_sessoes_detalhe(id) {
+      const s = sessoes.find(x => x.id === id);
+      const html = `
+        <div class="space-y-4">
+          <div class="flex items-center gap-4 pb-4 border-b border-marca-100">
+            <div class="w-12 h-12 rounded-full bg-marca-100 flex items-center justify-center">
+              <svg class="w-6 h-6 text-marca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-bold text-marca-900">${s.posto}</h3>
+              <p class="text-sm text-marca-500">${s.endereco}</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-marca-50 rounded-lg p-3">
+              <p class="text-xs text-marca-500 mb-1">Data e Hora</p>
+              <p class="font-semibold text-marca-900">${dataBR(s.data)} às ${s.hora}</p>
+            </div>
+            <div class="bg-marca-50 rounded-lg p-3">
+              <p class="text-xs text-marca-500 mb-1">Status</p>
+              <span class="badge-concluida px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Sessão Concluída</span>
+            </div>
+            <div class="bg-marca-50 rounded-lg p-3">
+              <p class="text-xs text-marca-500 mb-1">Energia Fornecida</p>
+              <p class="font-semibold text-marca-900">${s.kwh} kWh</p>
+            </div>
+            <div class="bg-marca-50 rounded-lg p-3">
+              <p class="text-xs text-marca-500 mb-1">Duração</p>
+              <p class="font-semibold text-marca-900">${s.duracao}</p>
+            </div>
+          </div>
+
+          <div class="bg-marca-600 rounded-xl p-4 text-white">
+            <div class="flex justify-between items-center">
+              <span class="text-marca-200">Valor Total</span>
+              <span class="text-2xl font-bold">${brl(s.valor)}</span>
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button onclick="fecharModal(); historico_de_sessoes_recibo(${s.id})" class="flex-1 btn bg-marca-600 text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              Baixar Recibo
+            </button>
+            <button onclick="fecharModal()" class="px-4 py-3 border border-marca-200 text-marca-600 rounded-xl font-medium hover:bg-marca-50 transition-colors">
+              Fechar
+            </button>
+          </div>
+        </div>
+      `;
+      abrirModal(html, 'Detalhes da Sessão');
+    }
+
+    function historico_de_sessoes_recibo(id) {
+      const s = sessoes.find(x => x.id === id);
+      toast(`Recibo PDF da sessão em ${s.posto} está sendo gerado...`, 'info');
+      setTimeout(() => {
+        toast('Recibo baixado com sucesso!', 'ok');
+      }, 1500);
+    }
+
+    // Inicializar
+    historico_de_sessoes_renderizar();
+  </script>
+</section>
+
     <!-- TELAS -->
       <!-- TELAS -->
 
